@@ -1,4 +1,4 @@
-use std::process::exit;
+use std::{env, process};
 
 use clap::{Parser, Subcommand};
 use kvs::KvStore;
@@ -21,28 +21,26 @@ enum Commands {
 
 fn main() {
     let cli = Cli::parse();
-    let mut kv: KvStore = KvStore::new();
+    let path = env::current_dir().unwrap();
+    let mut kv: KvStore = KvStore::open(path).unwrap();
     match &cli.command {
         Commands::Get { key } => {
-            eprintln!("unimplemented");
-            exit(1);
-            // if let Some(value) = kv.get(key.clone()) {
-            //     println!("get key = {}, value = {}", key, value);
-            // } else {
-            //     println!("gey key = {}, but value not found", key);
-            // }
+            if let Ok(Some(value)) = kv.get(key.clone()) {
+                println!("{}", value);
+            } else {
+                println!("Key not found");
+            }
         }
-        Commands::Set { key, value } => {
-            // kv.set(key.clone(), value.clone());
-            // println!("set key = {}, value = {}", key, value);
-            eprintln!("unimplemented");
-            exit(1);
-        }
+        Commands::Set { key, value } => match kv.set(key.clone(), value.clone()) {
+            Ok(_) => {}
+            Err(err) => println!("{}", err),
+        },
         Commands::Remove { key } => {
-            // kv.remove(key.clone());
-            // println!("remove key = {}", key);
-            eprintln!("unimplemented");
-            exit(1);
+            if let Ok(_) = kv.remove(key.clone()) {
+            } else {
+                println!("Key not found");
+                process::exit(-1);
+            }
         }
     }
 }
