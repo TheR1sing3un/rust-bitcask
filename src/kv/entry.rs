@@ -38,3 +38,14 @@ impl SerializeToBytes for LogEntry {
         buf
     }
 }
+
+impl SerializeToBytes for HintEntry {
+    fn serialize(&self) -> Vec<u8> {
+        let mut buf: Vec<u8> = Vec::with_capacity(8 + 8 + 8 + self.k_size as usize);
+        buf.append(&mut self.k_size.to_be_bytes().to_vec());
+        buf.append(&mut self.v_size.to_be_bytes().to_vec());
+        buf.append(&mut self.v_pos.to_be_bytes().to_vec());
+        buf.append(&mut self.key.clone());
+        buf
+    }
+}

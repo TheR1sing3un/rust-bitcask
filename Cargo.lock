@@ -265,6 +265,7 @@ dependencies = [
  "bincode",
  "clap",
  "failure",
+ "lazy_static",
  "predicates",
  "serde",
  "tempfile",
