@@ -22,8 +22,8 @@ use super::entry::SerializeToBytes;
 use crate::io::{BufReaderWithPos, BufWriterWithPos};
 
 const DELETED_CODE: u8 = 255;
-const DEFAULT_LOG_FILE_MAX_BYTES: u64 = 1024;
-const DEFAULT_MERGE_TRIGGER_THRESHOLD: u64 = 1024;
+const DEFAULT_LOG_FILE_MAX_BYTES: u64 = 1 * 1024 * 1024 * 1024;
+const DEFAULT_MERGE_TRIGGER_THRESHOLD: u64 = 128 * 1024 * 1024;
 
 #[derive(Clone)]
 pub struct BitcaskEngine {
@@ -67,6 +67,7 @@ impl KvsEngine for BitcaskEngine {
         }
         Ok(())
     }
+
     fn get(&self, key: String) -> Result<Option<String>> {
         // find in index
         if let Some(index_entry) = self.index.get(&key) {
@@ -241,10 +242,10 @@ impl BitcaskEngine {
 
         // remove old log files and reader
         for id in old_log_file_ids {
-            let path = log_path(&self.base_dir, *id, "log");
-            remove_file(&path)?;
             // remove reader
             self.file_reader.remove(id);
+            let path = log_path(&self.base_dir, *id, "log");
+            remove_file(&path)?;
         }
 
         // update

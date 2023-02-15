@@ -25,5 +25,9 @@ assert_cmd = "0.11.0"
 predicates = "1.0.0"
 tempfile = "3.0.7"
 walkdir = "2.2.7"
-rand = "0.6.5"
-criterion = "0.3"
+rand = "0.8.5"
+criterion = { version = "0.3", features = ["html_reports"] }
+
+[[bench]]
+name = "engine_benches"
+harness = false
