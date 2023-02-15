@@ -1,0 +1,162 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'kvs'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "kvs",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'kvs-client'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=kvs-client",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "kvs-client",
+                    "kind": "bin"
+                }
+            },
+            "args": [
+                "set",
+                "a",
+                "1"
+            ],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'kvs-client'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=kvs-client",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "kvs-client",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug executable 'kvs-server'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--bin=kvs-server",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "kvs-server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in executable 'kvs-server'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--bin=kvs-server",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "kvs-server",
+                    "kind": "bin"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'thread_pool'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=thread_pool",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "thread_pool",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'kv_store'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=kv_store",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "kv_store",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug integration test 'cli'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--test=cli",
+                    "--package=kvs"
+                ],
+                "filter": {
+                    "name": "cli",
+                    "kind": "test"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

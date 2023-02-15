@@ -14,6 +14,12 @@ pub enum KvStoreErr {
     InnerErr(String),
     #[fail(display = "system error: {}", _0)]
     SystemErr(#[cause] FromUtf8Error),
+    #[fail(display = "unexcept error: {}", _0)]
+    UnexceptErr(String),
+    #[fail(display = "incomplete frame")]
+    IncompleteErr,
+    #[fail(display = "sled error: {}", _0)]
+    SledErr(#[cause] sled::Error),
 }
 
 impl From<io::Error> for KvStoreErr {
@@ -31,6 +37,12 @@ impl From<bincode::Error> for KvStoreErr {
 impl From<FromUtf8Error> for KvStoreErr {
     fn from(value: FromUtf8Error) -> Self {
         KvStoreErr::SystemErr(value)
+    }
+}
+
+impl From<sled::Error> for KvStoreErr {
+    fn from(value: sled::Error) -> Self {
+        KvStoreErr::SledErr(value)
     }
 }
 
