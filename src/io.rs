@@ -9,6 +9,7 @@ use std::io::Write;
 pub struct BufWriterWithPos<F: Write + Seek> {
     writer: BufWriter<F>,
     pub pos: u64,
+    pub flushed: u64,
 }
 
 impl<F: Write + Seek> BufWriterWithPos<F> {
@@ -17,6 +18,7 @@ impl<F: Write + Seek> BufWriterWithPos<F> {
         Ok(BufWriterWithPos {
             writer: (BufWriter::new(f)),
             pos: file_end_pos,
+            flushed: file_end_pos,
         })
     }
 }
@@ -29,6 +31,7 @@ impl<F: Write + Seek> Write for BufWriterWithPos<F> {
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
+        self.flushed = self.pos;
         self.writer.flush()
     }
 }

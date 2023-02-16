@@ -22,8 +22,9 @@ use super::entry::SerializeToBytes;
 use crate::io::{BufReaderWithPos, BufWriterWithPos};
 
 const DELETED_CODE: u8 = 255;
-const DEFAULT_LOG_FILE_MAX_BYTES: u64 = 1 * 1024 * 1024 * 1024;
-const DEFAULT_MERGE_TRIGGER_THRESHOLD: u64 = 128 * 1024 * 1024;
+const DEFAULT_LOG_FILE_MAX_BYTES: u64 = 1024 * 1024 * 1024;
+const DEFAULT_MERGE_TRIGGER_THRESHOLD: u64 = 1024 * 1024 * 1024;
+const DEFAULT_WRITE_FLUSH_INTERVAL: u64 = 4 * 1024 * 1024;
 
 #[derive(Clone)]
 pub struct BitcaskEngine {
@@ -87,6 +88,7 @@ impl KvsEngine for BitcaskEngine {
             Ok(None)
         }
     }
+
     fn remove(&self, key: String) -> Result<()> {
         // find in index
         if self.index.contains_key(&key) {
@@ -116,6 +118,12 @@ impl KvsEngine for BitcaskEngine {
 }
 
 impl BitcaskEngine {
+    pub fn flush(&self) -> Result<()> {
+        let mut writer = self.active_file_writer.lock().unwrap();
+        writer.flush()?;
+        Ok(())
+    }
+
     fn write_and_flush(&self, buf: &[u8]) -> Result<(u64, u64)> {
         let size = buf.len() as u64;
         let mut writer = self.active_file_writer.lock().unwrap();
@@ -124,6 +132,7 @@ impl BitcaskEngine {
             // check out new active file writer
             self.active_file_id.fetch_add(1, Ordering::SeqCst);
             now_file_id += 1;
+            writer.flush()?;
             *writer = gen_file_writer_with_pos(
                 &self.base_dir,
                 now_file_id,
@@ -136,7 +145,9 @@ impl BitcaskEngine {
             );
         }
         writer.write(buf)?;
-        writer.flush()?;
+        if writer.pos - writer.flushed >= DEFAULT_WRITE_FLUSH_INTERVAL {
+            writer.flush()?;
+        }
         Ok((now_file_id, writer.pos))
     }
 
